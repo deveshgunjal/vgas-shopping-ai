@@ -1,0 +1,22 @@
+{
+    "venvPath": ".",
+    "venv": "venv",
+    "extraPaths": [
+        "."
+    ],
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false,
+    "reportUnusedImport": "warning",
+    "reportUnusedVariable": "warning",
+    "reportUnusedFunction": "warning",
+    "reportUnusedClass": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "reportOptionalSubscript": "ignore",
+    "reportOptionalMemberAccess": "ignore",
+    "reportAttributeAccessIssue": "ignore",
+    "reportPossiblyUnboundVariable": "ignore",
+    "reportInvalidTypeForm": "ignore",
+    "pythonVersion": "3.12",
+    "pythonPlatform": "Windows",
+    "typeCheckingMode": "off"
+}

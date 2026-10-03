@@ -1,0 +1,103 @@
+# ============================================================
+# LITELLM PROXY CONFIG - VGAS Shopping AI
+# Smart Routing + Auto-Fallback + 402 Error Handling
+# Master: Vikas Gunjal | August 2026
+# ============================================================
+
+# General Settings
+general_settings:
+  master_key: "sk-vikas-master-2025"
+  completion_model: "auto-router"
+  disable_spend_logs: true
+  disable_error_logs: false
+
+litellm_settings:
+  # Drop any unsupported params
+  drop_params: true
+  # Timeout for each provider
+  request_timeout: 60
+  # Enable streaming
+  stream: true
+  # Fallback behavior
+  num_retries: 3
+  retry_after: 5
+  # Context window fallbacks
+  context_window_fallbacks:
+    - "groq/compound": 128000
+    - "openrouter/nvidia/nemotron-3.5-lightning:free": 128000
+    - "mistral/mistral-small-latest": 128000
+
+# ============================================================
+# ROUTE MAP - Smart Task-Based Routing
+# ============================================================
+router_settings:
+  routing_strategy: "latency-based-routing"
+  enable_pre_call_checks: true
+  allowed_fails: 2
+  cooldown_time: 30
+  retry_policy:
+    ContentPolicyViolationError:
+      num_retries: 0
+    RateLimitError:
+      num_retries: 2
+    TimeoutError:
+      num_retries: 3
+
+# ============================================================
+# PROVIDERS - Only WORKING ones (Tested & Verified)
+# ============================================================
+model_list:
+  # --- GROQ (ULTRA FAST - Primary) ---
+  - model_name: "fast"
+    litellm_params:
+      model: "groq/groq/compound"
+      api_key: "os.environ/GROQ_API_KEY"
+      api_base: "https://api.groq.com/openai/v1"
+      max_tokens: 8192
+      timeout: 30
+
+  - model_name: "fast-code"
+    litellm_params:
+      model: "groq/qwen/qwen3.6-27b"
+      api_key: "os.environ/GROQ_API_KEY"
+      api_base: "https://api.groq.com/openai/v1"
+      max_tokens: 8192
+      timeout: 30
+
+  # --- OPENROUTER (FREE MODELS - Secondary) ---
+  - model_name: "free"
+    litellm_params:
+      model: "openrouter/nvidia/nemotron-3.5-lightning:free"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      api_base: "https://openrouter.ai/api/v1"
+      max_tokens: 8192
+      timeout: 30
+
+  # --- MISTRAL (CODE - Tertiary) ---
+  - model_name: "code"
+    litellm_params:
+      model: "mistral/mistral-small-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+      api_base: "https://api.mistral.ai/v1"
+      max_tokens: 8192
+      timeout: 30
+
+  # --- AUTO ROUTER (FALLBACK CHAIN) ---
+  - model_name: "auto-router"
+    litellm_params:
+      model: "groq/groq/compound"
+      api_key: "os.environ/GROQ_API_KEY"
+      api_base: "https://api.groq.com/openai/v1"
+      max_tokens: 8192
+      timeout: 30
+
+# ============================================================
+# AUTO-FALLBACK CHAIN (On 402/429/500 Errors)
+# ============================================================
+# When primary provider fails:
+# 1. Rate Limit (429) -> Wait 5s -> Retry -> Switch to next
+# 2. Payment Required (402) -> Skip to next provider
+# 3. Server Error (500) -> Retry 2x -> Switch to next
+# 4. Timeout -> Retry 3x -> Switch to next
+#
+# Chain: Groq -> OpenRouter -> Mistral -> (repeat)

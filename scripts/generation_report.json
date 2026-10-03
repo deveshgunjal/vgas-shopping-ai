@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-02T17:56:21.087194",
+  "elapsed_seconds": 86.02394413948059,
+  "screens": [
+    {
+      "name": "CompareScreen",
+      "file": "D:\\projects\\Vgas Shooping Ai\\web\\src\\screens\\CompareScreen.jsx",
+      "chars": 3048
+    },
+    {
+      "name": "ProductDetailScreen",
+      "file": "D:\\projects\\Vgas Shooping Ai\\web\\src\\screens\\ProductDetailScreen.jsx",
+      "chars": 7258
+    },
+    {
+      "name": "AdminDashboardScreen",
+      "file": "D:\\projects\\Vgas Shooping Ai\\web\\src\\screens\\AdminDashboardScreen.jsx",
+      "chars": 6406
+    },
+    {
+      "name": "ProfileScreen",
+      "file": "D:\\projects\\Vgas Shooping Ai\\web\\src\\screens\\ProfileScreen.jsx",
+      "chars": 5348
+    }
+  ]
+}

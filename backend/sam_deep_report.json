@@ -1,0 +1,47 @@
+{
+  "iPhone 16": {
+    "query": "iPhone 16",
+    "prices": [],
+    "cashback": [],
+    "coupons": [],
+    "telegram_deals": [],
+    "best_price": null,
+    "total_sources": 0
+  },
+  "Samsung Galaxy S24": {
+    "query": "Samsung Galaxy S24",
+    "prices": [],
+    "cashback": [],
+    "coupons": [],
+    "telegram_deals": [],
+    "best_price": null,
+    "total_sources": 0
+  },
+  "Sony WH-1000XM5": {
+    "query": "Sony WH-1000XM5",
+    "prices": [],
+    "cashback": [],
+    "coupons": [],
+    "telegram_deals": [],
+    "best_price": null,
+    "total_sources": 0
+  },
+  "Nike Air Max": {
+    "query": "Nike Air Max",
+    "prices": [],
+    "cashback": [],
+    "coupons": [],
+    "telegram_deals": [],
+    "best_price": null,
+    "total_sources": 0
+  },
+  "boAt headphones": {
+    "query": "boAt headphones",
+    "prices": [],
+    "cashback": [],
+    "coupons": [],
+    "telegram_deals": [],
+    "best_price": null,
+    "total_sources": 0
+  }
+}
