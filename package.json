@@ -1,0 +1,13 @@
+{
+  "name": "vgas-shopping-ai",
+  "version": "3.0.0",
+  "description": "AI-Powered Deal Snatcher & Price Optimization Platform",
+  "scripts": {
+    "start": "python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload",
+    "seed": "python backend/bootstrap.py",
+    "heal": "python self_heal.py",
+    "test": "pytest tests/ -v"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

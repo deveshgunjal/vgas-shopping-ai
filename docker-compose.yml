@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  vgas-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///vgas_shopping.db
+      - REDIS_URL=redis://redis:6379/0
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID:-}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - SAM_RULES=off
+    volumes:
+      - ./backend:/app/backend
+      - vgas_data:/app/data
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  deal-hunter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python deal_hunter.py
+    environment:
+      - DATABASE_URL=sqlite:///data/vgas_shopping.db
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./backend:/app/backend
+      - vgas_data:/app/data
+    depends_on:
+      - vgas-backend
+      - redis
+    restart: unless-stopped
+
+volumes:
+  vgas_data:
+  redis_data:

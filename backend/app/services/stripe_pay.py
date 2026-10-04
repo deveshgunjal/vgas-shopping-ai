@@ -32,6 +32,31 @@ def create_checkout_session(user_id: int, plan: str) -> Dict:
     except Exception as e:
         return {"error": str(e)}
 
+def retrieve_checkout_session(session_id: str) -> Dict:
+    """Retrieve a checkout session from the REAL Stripe API.
+
+    Returns {"error": ...} if the session does not exist or Stripe is
+    unreachable. It never guesses — verification must come from Stripe.
+    """
+    if not stripe.api_key:
+        return {"error": "STRIPE_SECRET_KEY is not configured"}
+    if not session_id or not str(session_id).startswith("cs_"):
+        return {"error": f"Not a Stripe checkout session id: {session_id!r}"}
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        return {
+            "session_id": session.id,
+            "payment_status": session.payment_status,   # paid | unpaid | no_payment_required
+            "status": session.status,                   # open | complete | expired
+            "user_id": (session.metadata or {}).get("user_id"),
+            "plan": (session.metadata or {}).get("plan"),
+            "amount_total": session.amount_total,
+            "currency": session.currency,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def handle_webhook(payload: bytes, sig_header: str) -> Dict:
     """Handle Stripe webhook"""
     try:

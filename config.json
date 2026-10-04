@@ -1,0 +1,28 @@
+{
+  "app_name": "Vgas Shopping AI v3.0",
+  "version": "3.0.0",
+  "backend_port": 8000,
+  "database": "sqlite:///vgas_shopping.db",
+  "stores": [
+    "amazon",
+    "flipkart",
+    "ebay",
+    "walmart",
+    "myntra",
+    "nykaa"
+  ],
+  "plans": {
+    "free": {
+      "price": 0,
+      "tracks": 5
+    },
+    "pro": {
+      "price": 99,
+      "tracks": -1
+    },
+    "premium": {
+      "price": 299,
+      "tracks": -1
+    }
+  }
+}

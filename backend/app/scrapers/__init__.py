@@ -3,7 +3,7 @@ from app.scrapers.amazon_scraper import AmazonScraper
 from app.scrapers.flipkart_scraper import FlipkartScraper
 from app.scrapers.myntra_scraper import MyntraScraper
 from app.scrapers.ajio_scraper import AjioScraper
-from app.scrapers.global_scrapers import GlobalScraperHub
+from app.scrapers.global_scrapers import GlobalScrapers
 
 def get_scraper(domain_or_name: str):
     """Factory function to get appropriate scraper for a domain or name"""
@@ -17,5 +17,5 @@ def get_scraper(domain_or_name: str):
     elif "ajio" in domain:
         return AjioScraper()
     
-    # Check in GlobalScraperHub
-    return GlobalScraperHub.get_scraper(domain)
+    # Check in GlobalScrapers
+    return GlobalScrapers.get_scraper(domain)

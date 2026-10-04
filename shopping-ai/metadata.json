@@ -1,0 +1,6 @@
+{
+  "name": "Shopping AI",
+  "description": "VGAS (Vikas Gunjal Advance System) Smart e-commerce price tracker with fake discount detection, WhatsApp bot automation, affiliate link conversion, and multilingual support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

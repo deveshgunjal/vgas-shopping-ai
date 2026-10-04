@@ -39,39 +39,42 @@ class MonetizationService:
         return tracking_url
 
     def get_ad_placement(self, page: str = "homepage") -> Dict:
-        """Get ad configuration for a page"""
-        ads = {
-            "homepage": {
-                "banner": {"type": "image", "url": "https://vgas.ai/ads/banner1.png", "click_url": "https://vgas.ai/redirect/abc123"},
-                "sidebar": {"type": "text", "title": "Best Deals Today", "content": "Check out today's hottest deals!"},
-                "inline": {"type": "native", "product_id": "sample_product"},
-            },
-            "product": {
-                "comparison": {"type": "comparison", "title": "Compare Prices"},
-                "footer": {"type": "image", "url": "https://vgas.ai/ads/footer.png"},
-            },
-            "search": {
-                "top": {"type": "sponsored", "title": "Sponsored Results"},
-            },
+        """Get ad configuration for a page.
+
+        No ad network (AdMob / Google Ads) is integrated into this codebase, so
+        there is nothing real to serve. Returning fabricated ad URLs here would
+        make the UI render banners that lead nowhere, so placements stay empty
+        and the UI must render its own "no ads" state.
+        """
+        return {
+            "enabled": False,
+            "reason": "No ad network is integrated — placements are intentionally empty.",
+            "page": page,
+            "placements": {},
         }
-        return ads.get(page, ads["homepage"])
 
     def calculate_cashback(self, amount: float, user_id: int, plan: str = "free") -> Dict:
-        """Calculate cashback on purchase"""
-        base_rate = 2.0  # 2% base cashback
+        """Compute the cashback rate for an amount.
+
+        This is a rate calculation only. It is NOT a payout: no transfer is
+        triggered here and no ledger row is written, so the result must not be
+        presented to the user as money already owed to them.
+        """
+        base_rate = 2.0  # 2% base cashback rate (published rate)
         premium_bonus = 1.0 if plan in ["pro", "premium"] else 0.0
         total_rate = base_rate + premium_bonus
-        
+
         cashback = amount * total_rate / 100
-        
+
         return {
             "purchase_amount": amount,
             "cashback_rate": total_rate,
             "cashback_amount": round(cashback, 2),
             "currency": "INR",
             "payout_method": "UPI",
-            "estimated_payout": "5 minutes",
+            "payout_status": "not_issued",
             "plan": plan,
+            "note": "Rate estimate only. No payout system is connected and nothing has been transferred.",
         }
 
     def get_referral_stats(self, user_id: int, db: Session = None) -> Dict:

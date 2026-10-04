@@ -650,8 +650,14 @@ class AmazonScraper(BaseScraper):
 
             # Price (modern layout: span.a-price > span.a-offscreen)
             price_el = item.select_one(".a-price .a-offscreen")
+            if not price_el:
+                # Fallback: priceblock IDs (common on Amazon)
+                price_el = item.find("span", {"id": re.compile(r"priceblock_(ourprice|dealprice)")})
+            if not price_el:
+                # Fallback: data-price attribute
+                price_el = item.find(attrs={"data-price": True})
             if price_el:
-                price_text = price_el.get_text().strip()
+                price_text = price_el.get_text().strip() if price_el.get_text() else str(price_el.get("data-price", ""))
                 currency, amount = await self.extract_currency(price_text)
                 data["current_price"] = amount
                 data["currency"] = currency

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vgas Shopping AI v3</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:20px auto;padding:0 12px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #ccc;padding:6px;text-align:left}input,button{padding:8px;font-size:15px}button{cursor:pointer}.row{display:flex;gap:8px;margin:10px 0}section{margin-top:24px}</style>
+</head>
+<body>
+<h1>Vgas Shopping AI v3</h1>
+<div class="row">
+<input id="q" placeholder="Search product..." style="flex:1">
+<button onclick="search()">Search</button>
+</div>
+<div id="src"></div>
+<table id="tbl" hidden><thead><tr><th>Store</th><th>Title</th><th>Price</th><th>MRP</th><th>Off%</th><th></th></tr></thead><tbody id="tb"></tbody></table>
+<section><h2>Deal Alert</h2><div class="row">
+<input id="aq" placeholder="Product"><input id="ap" type="number" placeholder="Target ₹" style="width:120px"><button onclick="alert_()">Set Alert</button>
+</div><ul id="deals"></ul></section>
+<section><h2>Cart</h2><ul id="cart"></ul><b id="ctot"></b></section>
+<section><h2>Revenue</h2><pre id="rev"></pre><button onclick="rev()">Refresh Stats</button></section>
+<script>
+const B='';
+async function search(){const q=document.getElementById('q').value.trim();if(!q)return;
+const r=await(await fetch(B+'/api/search?q='+encodeURIComponent(q))).json();
+document.getElementById('src').textContent='source: '+r.source+' | model: '+r.model;
+const tb=document.getElementById('tb');tb.innerHTML='';
+r.results.forEach(x=>{const tr=document.createElement('tr');
+tr.innerHTML=`<td>${x.store}</td><td>${x.title}</td><td>₹${x.price}</td><td>₹${x.mrp}</td><td>${x.discount_pct}%</td>`;
+const b=document.createElement('button');b.textContent='Add';
+b.onclick=async()=>{await fetch(B+'/api/cart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({store:x.store,title:x.title,price:x.price,qty:1})});loadCart();rev();};
+const td=document.createElement('td');td.appendChild(b);tr.appendChild(td);tb.appendChild(tr);});
+document.getElementById('tbl').hidden=false;}
+async function alert_(){const query=document.getElementById('aq').value.trim(),target_price=+document.getElementById('ap').value;if(!query||!target_price)return;
+await fetch(B+'/api/deals/alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,target_price})});loadDeals();}
+async function loadDeals(){const r=await(await fetch(B+'/api/deals')).json();
+document.getElementById('deals').innerHTML=r.alerts.map(a=>`<li>#${a.id} ${a.query} @ ₹${a.target_price}</li>`).join('');}
+async function loadCart(){const r=await(await fetch(B+'/api/cart')).json();
+document.getElementById('cart').innerHTML=r.items.map(i=>`<li>#${i.id} [${i.store}] ${i.title} x${i.qty} — ₹${i.price}</li>`).join('');
+document.getElementById('ctot').textContent='Total: ₹'+r.total;}
+async function rev(){document.getElementById('rev').textContent=JSON.stringify(await(await fetch(B+'/api/revenue/stats')).json(),null,2);}
+loadDeals();loadCart();rev();
+</script>
+</body>
+</html>

@@ -95,7 +95,7 @@ fun AiChatModal(
             Column {
               Text("VGAS AI Shopping Assistant", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = NeonCyan)
               Text("VGAS • मराठी • हिंदी • தமிழ் • తెలుగు • বাংলা • English (All India Languages)", style = MaterialTheme.typography.bodySmall, color = Color(0xFFD8B4FE))
-              Text("📍 Chhatrapati Sambhaji Nagar | 📞 +91 9881300933", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp), color = NeonEmerald)
+              Text("AI-Powered Shopping Assistant", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp), color = NeonEmerald)
             }
           }
           IconButton(onClick = onClose) {

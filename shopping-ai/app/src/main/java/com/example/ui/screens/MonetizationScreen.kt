@@ -112,7 +112,7 @@ fun MonetizationScreen(
           Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             MetricCard("Total India Commission", "₹$totalCommission", NeonEmerald, Modifier.weight(1f))
             Spacer(modifier = Modifier.width(8.dp))
-            MetricCard("Global USD ($) Revenue", "$1,450.00", Color(0xFF38BDF8), Modifier.weight(1f))
+            MetricCard("Global USD ($) Revenue", "Not available", Color(0xFF38BDF8), Modifier.weight(1f))
             Spacer(modifier = Modifier.width(8.dp))
             MetricCard("Global Clicks / Conv.", "$clicksCount (${conversionRate}%)", Color(0xFFB388FF), Modifier.weight(1f))
           }
@@ -145,11 +145,11 @@ fun MonetizationScreen(
           Text("📈 Worldwide AdMob & AdSense eCPM Comparison:", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = NeonCyan)
           Spacer(modifier = Modifier.height(6.dp))
           Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            MetricCard("USA 🇺🇸 & UK 🇬🇧", "$24.50 eCPM", Color(0xFF4ADE80), Modifier.weight(1f))
+            MetricCard("USA 🇺🇸 & UK 🇬🇧", "Not available", Color(0xFF4ADE80), Modifier.weight(1f))
             Spacer(modifier = Modifier.width(6.dp))
-            MetricCard("Europe 🇪🇺 & UAE 🇦🇪", "$18.20 eCPM", Color(0xFF38BDF8), Modifier.weight(1f))
+            MetricCard("Europe 🇪🇺 & UAE 🇦🇪", "Not available", Color(0xFF38BDF8), Modifier.weight(1f))
             Spacer(modifier = Modifier.width(6.dp))
-            MetricCard("India 🇮🇳 & Asia", "$2.40 eCPM", Color(0xFFFACC15), Modifier.weight(1f))
+            MetricCard("India 🇮🇳 & Asia", "Not available", Color(0xFFFACC15), Modifier.weight(1f))
           }
 
           Spacer(modifier = Modifier.height(14.dp))
@@ -164,7 +164,7 @@ fun MonetizationScreen(
               Text("🛍️ Amazon Global (US/UK/DE/JP/AE/IN): Automated Tag routing (tag=vgas-global-20)", style = MaterialTheme.typography.labelSmall, color = Color.White)
               Text("🛒 Walmart US & eBay Partner Network: High 4% to 10% USD Commissions via PayPal", style = MaterialTheme.typography.labelSmall, color = Color(0xFFA7F3D0))
               Text("⚡ AliExpress & Noon (Dubai/UAE): Best for electronics & dropshipping deals", style = MaterialTheme.typography.labelSmall, color = Color(0xFFFDE047))
-              Text("🏦 Payout System: PayPal Business / Payoneer / SWIFT Wire Transfer directly to Mr. Vikas Gunjal's account in Chhatrapati Sambhaji Nagar!", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = NeonEmerald)
+              Text("🏦 Payout System: Configure your payout method in settings.", style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
             }
           }
         }
@@ -183,11 +183,11 @@ fun MonetizationScreen(
           Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.MonetizationOn, contentDescription = null, tint = Color(0xFF38BDF8), modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("🏦 PayPal Business Payout Hub (Active)", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
+            Text("🏦 Payout Hub", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
           }
           Spacer(modifier = Modifier.height(6.dp))
           Text(
-            text = "Your PayPal Business account is ready to receive global USD ($), EUR (€), and GBP (£) affiliate revenues from worldwide networks!",
+            text = "Connect your payment provider to receive affiliate revenues.",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFF94A3B8)
           )
@@ -200,20 +200,12 @@ fun MonetizationScreen(
           ) {
             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
               Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Registered PayPal ID:", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
-                Text("gunjalvikas786@gmail.com ✅", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFF4ADE80))
+                Text("Payment Provider:", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
+                Text("Not connected", style = MaterialTheme.typography.labelMedium, color = Color(0xFF64748B))
               }
               Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("RBI Purpose Code (FIRC):", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
-                Text("P0104 (Software & IT Services) / P0802", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFFFDE047))
-              }
-              Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Auto-Withdrawal to Bank:", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
-                Text("Daily Auto-Transfer within 24 hrs", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFF38BDF8))
-              }
-              Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("AdSense & AdMob Payout:", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
-                Text("Direct SWIFT Bank Wire (EFT) every 21st", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = Color(0xFFE040FB))
+                Text("Payout Schedule:", style = MaterialTheme.typography.labelMedium, color = Color(0xFF94A3B8))
+                Text("Not configured", style = MaterialTheme.typography.labelMedium, color = Color(0xFF64748B))
               }
             }
           }
@@ -345,7 +337,7 @@ fun MonetizationScreen(
           }
           Spacer(modifier = Modifier.height(8.dp))
           Text(
-            text = "Supercharge your PayPal (gunjalvikas786@gmail.com) and Bank revenue with automated viral referral loops and high-eCPM smart notification ads!",
+            text = "Configure your referral and notification settings to earn affiliate revenue.",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFFE2E8F0)
           )
@@ -359,7 +351,7 @@ fun MonetizationScreen(
             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
               Row(verticalAlignment = Alignment.Top) {
                 Text("🔥 ", fontSize = 14.sp)
-                Text("Viral WhatsApp Invite Loop: Every user gets a custom share link (e.g., vgas.app/ref/gunjal). When friends join and shop, you earn an extra 2% lifetime overriding royalty commission!", style = MaterialTheme.typography.labelSmall, color = Color(0xFFFDE047))
+                Text("Viral WhatsApp Invite Loop: Share your referral link to earn commission on qualifying purchases.", style = MaterialTheme.typography.labelSmall, color = Color(0xFFFDE047))
               }
               Row(verticalAlignment = Alignment.Top) {
                 Text("🔔 ", fontSize = 14.sp)
@@ -367,7 +359,7 @@ fun MonetizationScreen(
               }
               Row(verticalAlignment = Alignment.Top) {
                 Text("💎 ", fontSize = 14.sp)
-                Text("Branded Premium Sponsorships: Featured Top-Banner slots for brands like Samsung, Boat, and Apple paying ₹50,000 to ₹2,00,000 / month directly to your account!", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = Color(0xFF4ADE80))
+                Text("Branded Premium Sponsorships: Contact the team for sponsorship opportunities.", style = MaterialTheme.typography.labelSmall, color = Color(0xFF4ADE80))
               }
             }
           }
@@ -391,7 +383,7 @@ fun MonetizationScreen(
           }
           Spacer(modifier = Modifier.height(6.dp))
           Text(
-            text = "While Google Play Store publishing is preparing, execute these proven viral growth strategies by Mr. Vikas Gunjal to achieve 10 Million+ downloads & massive affiliate revenue!",
+            text = "While Google Play Store publishing is preparing, execute these proven viral growth strategies to maximize downloads and affiliate revenue.",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFFE2E8F0)
           )
@@ -424,7 +416,7 @@ fun MonetizationScreen(
                 Text("💬 ", fontSize = 14.sp)
                 Column {
                   Text("3. Telegram & WhatsApp Broadcast Network:", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = Color(0xFF4ADE80))
-                  Text("Create official 'VGAS Loot Deals by Vikas Gunjal' broadcast channels. Post hourly price-drop affiliate links. When subscribers forward links to groups, your PayPal & Bank revenue multiplies 10X!", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
+                  Text("Create official broadcast channels. Post hourly price-drop affiliate links. When subscribers forward links to groups, your revenue grows.", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
                 }
               }
               Row(verticalAlignment = Alignment.Top) {
@@ -438,7 +430,7 @@ fun MonetizationScreen(
                 Text("📰 ", fontSize = 14.sp)
                 Column {
                   Text("5. Press Media & Regional Coverage:", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = Color(0xFFD8B4FE))
-                  Text("Publish press releases in leading Marathi & Indian newspapers (Lokmat, ABP Majha, Divya Marathi, Dainik Bhaskar): 'Chhatrapati Sambhaji Nagar Engineer Mr. Vikas Gunjal builds World-Class Multilingual AI Shopping Platform!'", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
+                  Text("Publish press releases in leading regional & Indian newspapers to reach a wider audience.", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
                 }
               }
             }
@@ -506,7 +498,7 @@ fun MonetizationScreen(
               Text(scriptText, style = MaterialTheme.typography.bodySmall, color = Color(0xFFFDE047))
               Spacer(modifier = Modifier.height(8.dp))
               Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("💡 Tip: Post this daily! Every referral sale sends commission directly to PayPal: gunjalvikas786@gmail.com", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold), color = Color(0xFF4ADE80))
+                Text("💡 Tip: Post this daily to maximize your referral reach.", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp), color = Color(0xFF4ADE80))
               }
             }
           }
@@ -546,14 +538,14 @@ fun MonetizationScreen(
                 Text("🎉 ", fontSize = 14.sp)
                 Column {
                   Text("1. Daily Scratch & Win Reward Cards:", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = Color(0xFFFFB703))
-                  Text("Users log in daily to scratch a virtual card winning 'VGAS Coins' or ₹50 Discount Vouchers. This increases daily ad impressions by 300%, skyrocketing your USD ($) AdMob eCPM payouts!", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
+                  Text("Users log in daily to scratch a virtual card winning rewards. This increases daily engagement and ad impressions.", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
                 }
               }
               Row(verticalAlignment = Alignment.Top) {
                 Text("👑 ", fontSize = 14.sp)
                 Column {
                   Text("2. VIP Influencer Overriding Royalty Tier:", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = Color(0xFF38BDF8))
-                  Text("YouTubers, Instagrammers, and Telegram channel admins get a verified badge and a custom 5% overriding lifetime royalty commission on their followers' shopping volume, paid directly via PayPal!", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
+                  Text("Content creators and channel admins can earn commission on their followers' shopping volume.", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
                 }
               }
               Row(verticalAlignment = Alignment.Top) {

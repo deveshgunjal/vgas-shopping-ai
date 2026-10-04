@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 import os
 
 from .database import init_db
+from .core.redis_cache import init_redis
 from .api import track, leaderboard, webhook
 from .services import whatsapp
 from .api.v1 import (
@@ -35,6 +36,7 @@ from .api.v1 import (
 async def lifespan(app: FastAPI):
     """Startup and shutdown events"""
     init_db()
+    await init_redis()
     print("Vgas Shopping AI v3.0 - Server Started!")
     yield
     print("Server Shutdown")

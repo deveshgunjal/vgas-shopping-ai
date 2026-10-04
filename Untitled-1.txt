@@ -1,0 +1,13 @@
+🚀 पर्याय १: "Import Settings" वर क्लिक करा (सर्वात सोपा मार्ग)
+जर तिथे Import Settings बटण दिसत असेल, तर त्यावर क्लिक करा.
+यामुळे आपण आधी settings.json मध्ये सेव्ह केलेल्या सर्व सेटिंग्ज (OpenAI, localhost:4000, vibe-coding) एक्स्टेंशनमध्ये आपोआप लोड होतील.
+🛠️ पर्याय २: "Choose your provider" मधून मॅन्युअली सेट करा
+जर 'Import Settings' ने काम नाही केले, तर Choose your provider वर क्लिक करा आणि खालीलप्रमाणे माहिती भरा:
+
+Provider (प्रोव्हायडर): OpenAI Compatible निवडा.
+Base URL: http://localhost:4000/v1 टाका.
+API Key: sk-vikas-master-2025 टाका.
+Model ID: vibe-coding लिहा.
+हे झाल्यावर खाली Save किंवा Let's Go वर क्लिक करा! तुमचे कोडिंग सुरू होईल.
+
+9:15 PM

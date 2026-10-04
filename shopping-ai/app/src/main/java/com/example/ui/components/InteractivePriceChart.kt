@@ -267,9 +267,9 @@ fun InteractivePriceChartModal(
             verticalAlignment = Alignment.CenterVertically
           ) {
             Text(
-              text = "Estimated Earnings: ~₹${(product.currentPrice * 0.045).toInt()} per sale",
-              style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-              color = NeonEmerald
+              text = "Earnings data not available",
+              style = MaterialTheme.typography.labelSmall,
+              color = Color(0xFF64748B)
             )
             Button(
               onClick = onCopyAffiliate,

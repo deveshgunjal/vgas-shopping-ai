@@ -18,8 +18,4 @@ class ShoppingRepository(private val dao: ShoppingDao) {
   suspend fun insertAlert(alert: PriceAlert) {
     dao.insertAlert(alert)
   }
-
-  suspend fun populateSampleDataIfNeeded() {
-    // No sample/demo data is inserted here. Product information is populated by backend scraping and real user activity.
-  }
 }

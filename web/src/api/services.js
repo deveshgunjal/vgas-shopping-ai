@@ -23,8 +23,14 @@ export const authAPI = {
 
 export const searchAPI = {
   search: (query) => api.get('/search/', { params: { query } }),
-  lootDeals: () => api.get('/search/loot-deals'),
-  trending: () => api.get('/search/trending'),
+  // These endpoints run LIVE scrapers across several stores, so they take far
+  // longer than the default 30s client timeout. Budget is bounded (45s) so the
+  // page never hangs; on expiry the UI shows an honest "no live data" message
+  // instead of silently falling back to fake products.
+  lootDeals: (limit = 12) => api.get('/search/loot-deals', { params: { limit }, timeout: 45000 }),
+  trending: (limit = 12) => api.get('/search/trending', { params: { limit }, timeout: 45000 }),
+  categories: () => api.get('/search/categories'),
+  stores: () => api.get('/search/stores'),
   visualSearch: (image) => api.post('/visual-search', { image }),
 };
 
@@ -62,6 +68,7 @@ export const adminAPI = {
   scrapers: () => api.get('/admin/scrapers'),
   users: () => api.get('/admin/users'),
   deals: () => api.get('/admin/deals'),
+  revenue: (days = 14) => api.get('/admin/revenue', { params: { days } }),
 };
 
 export default api;

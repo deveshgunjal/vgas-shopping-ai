@@ -47,17 +47,38 @@ async def admin_stats(db: Session = Depends(get_db)):
         active_users = db.query(User).filter(User.created_at >= datetime.utcnow() - timedelta(days=30)).count()
         
         total_tracks = db.query(ProductTrack).count()
-        
+
         today = datetime.utcnow() - timedelta(hours=24)
         total_deals_today = db.query(ProductTrack).filter(ProductTrack.created_at >= today).count()
-        
-        total_revenue = 234000.0  # Mock data
-        active_subscriptions = db.query(Subscription).filter(Subscription.status == "active").count()
-        
-        revenue_by_plan = {"free": 0.0, "pro": 123000.0, "premium": 111000.0}
-        users_by_plan = {"free": total_users - premium_users, "pro": premium_users // 2, "premium": premium_users - premium_users // 2}
-        
-        deals_by_store = {"amazon": 120, "flipkart": 85, "ebay": 45}
+
+        # REAL revenue: active subscriptions x plan price.
+        # Plan prices come from app.services.stripe_pay.PLANS (single source of
+        # truth) and are stored there in PAISE (9900 = Rs 99); converted to rupees
+        # here. No payment ledger exists yet, so affiliate revenue stays 0.
+        from app.services.stripe_pay import PLANS as _STRIPE_PLANS
+        PLAN_PRICES_RS = {
+            name: cfg["price"] / 100.0
+            for name, cfg in _STRIPE_PLANS.items()
+            if name != "free" and cfg.get("price")
+        }
+        active_subs = db.query(Subscription).filter(Subscription.status == "active").all()
+        revenue_by_plan: Dict[str, float] = {name: 0.0 for name in PLAN_PRICES_RS}
+        users_by_plan: Dict[str, int] = {name: 0 for name in PLAN_PRICES_RS}
+        for s in active_subs:
+            plan = (s.plan or "").lower()
+            if plan in PLAN_PRICES_RS:
+                revenue_by_plan[plan] += PLAN_PRICES_RS[plan]
+        for (plan,) in db.query(User.plan).all():
+            key = (plan or "free").lower()
+            users_by_plan[key] = users_by_plan.get(key, 0) + 1
+        total_revenue = round(sum(revenue_by_plan.values()), 2)
+        active_subscriptions = len(active_subs)
+
+        # REAL per-store counts from tracked products (not hardcoded).
+        from sqlalchemy import func as _func
+        deals_by_store: Dict[str, int] = {}
+        for (store, count) in db.query(ProductTrack.store, _func.count()).group_by(ProductTrack.store).all():
+            deals_by_store[store or "unknown"] = count
         
         top_products = []
         tracks = db.query(ProductTrack).order_by(ProductTrack.current_price.desc()).limit(5).all()
@@ -170,24 +191,49 @@ async def broadcast_message(message: str = "", db: Session = Depends(get_db)):
 
 @router.get("/revenue")
 async def get_revenue(days: int = 30, db: Session = Depends(get_db)):
-    """Get revenue breakdown"""
+    """Get revenue breakdown — REAL data from subscriptions started per day.
+
+    No payment ledger exists yet, so affiliate revenue is honestly reported
+    as 0 until payout tracking is added.
+    """
     try:
+        from sqlalchemy import func as _func
+        from app.services.stripe_pay import PLANS as _STRIPE_PLANS
+        # PLANS prices are in paise; convert to rupees for display.
+        PLAN_PRICES_RS = {
+            name: cfg["price"] / 100.0
+            for name, cfg in _STRIPE_PLANS.items()
+            if name != "free" and cfg.get("price")
+        }
         start_date = datetime.utcnow() - timedelta(days=days)
-        # Mock revenue data
+        subs = (
+            db.query(Subscription.started_at, Subscription.plan)
+            .filter(Subscription.started_at >= start_date)
+            .all()
+        )
+        per_day: Dict[str, float] = {}
+        for (started_at, plan) in subs:
+            if not started_at:
+                continue
+            day = started_at.date().isoformat()
+            per_day[day] = per_day.get(day, 0.0) + PLAN_PRICES_RS.get((plan or "").lower(), 0.0)
+
         revenue_data = []
         for i in range(days):
-            date = (start_date + timedelta(days=i)).isoformat()
+            date = (start_date + timedelta(days=i)).date().isoformat()
+            sub_rev = round(per_day.get(date, 0.0), 2)
             revenue_data.append({
                 "date": date,
-                "affiliate_revenue": round(5000 + (i * 100), 2),
-                "subscription_revenue": round(2000 + (i * 50), 2),
-                "total": round(7000 + (i * 150), 2),
+                "affiliate_revenue": 0.0,
+                "subscription_revenue": sub_rev,
+                "total": sub_rev,
             })
-        
+
         return {
             "period": f"Last {days} days",
             "data": revenue_data,
             "total_revenue": round(sum(d["total"] for d in revenue_data), 2),
+            "note": "Subscription revenue from real signup records. Affiliate payouts not tracked yet (reported as 0).",
         }
     except Exception as e:
         logger.error(f"Revenue error: {e}")

@@ -1,0 +1,16 @@
+# Ignore huge folders for EAS Build
+node_modules/
+.git/
+.claude/
+.venv/
+backend/
+bot/
+shopping-ai/
+shopping-ai.zip
+*.zip
+*.tar.gz
+*.exe
+*.iso
+*.dmg
+*.bin
+*.log

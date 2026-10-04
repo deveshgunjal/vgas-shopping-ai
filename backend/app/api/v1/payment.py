@@ -62,21 +62,35 @@ async def stripe_checkout(request: PaymentRequest):
 
 @router.post("/upi")
 async def upi_payment(request: PaymentRequest):
-    """Process UPI payment"""
+    """Build a UPI payment intent (deep link only).
+
+    This endpoint does NOT take money and does NOT confirm anything. It only
+    builds a standard `upi://pay` intent for the user's own UPI app. Because
+    there is no payment gateway in front of it, the returned status is always
+    "unverified" — the app must not treat this as a successful payment.
+    """
     try:
         if not request.upi_id:
             raise HTTPException(status_code=400, detail="UPI ID required")
-        
-        # Generate UPI payment link (mock for demo)
-        upi_url = f"upi://pay?pa={request.upi_id}&pn=VGAS+Shopping+AI&am={request.amount}&cu=INR"
-        
+
+        from urllib.parse import quote
+
+        upi_url = (
+            f"upi://pay?pa={quote(request.upi_id)}"
+            f"&pn={quote('VGAS Shopping AI')}"
+            f"&am={request.amount}&cu={request.currency}"
+        )
+
         return PaymentResponse(
-            payment_id=f"upi_{datetime.utcnow().timestamp()}",
-            status="pending",
+            payment_id=None,
+            status="unverified",
             amount=request.amount,
             currency=request.currency,
             redirect_url=upi_url,
-            message="UPI payment initiated"
+            message=(
+                "UPI intent link generated. No payment gateway is connected, so this "
+                "payment cannot be confirmed server-side and must not be treated as paid."
+            ),
         )
     except HTTPException:
         raise
@@ -98,15 +112,56 @@ async def stripe_webhook():
 
 @router.post("/verify")
 async def verify_payment(payment_id: str = "", method: str = "stripe"):
-    """Verify payment status"""
+    """Verify payment status against the REAL payment provider.
+
+    For Stripe this calls Stripe's API and reports what Stripe actually says.
+    Anything that cannot be verified is reported as unverified — this endpoint
+    never returns success for an ID it did not confirm with the provider.
+    """
     try:
-        # Mock verification for demo
+        if method == "stripe":
+            from app.services.stripe_pay import retrieve_checkout_session
+
+            result = retrieve_checkout_session(payment_id)
+            if "error" in result:
+                return {
+                    "payment_id": payment_id,
+                    "status": "unverified",
+                    "verified": False,
+                    "error": result["error"],
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "message": "Payment could not be confirmed with Stripe.",
+                }
+
+            paid = result.get("payment_status") == "paid"
+            return {
+                "payment_id": result.get("session_id"),
+                "status": "paid" if paid else result.get("payment_status") or "unknown",
+                "verified": paid,
+                "user_id": result.get("user_id"),
+                "plan": result.get("plan"),
+                "amount_total": result.get("amount_total"),
+                "currency": result.get("currency"),
+                "source": "stripe_api",
+                "timestamp": datetime.utcnow().isoformat(),
+                "message": (
+                    "Confirmed by the Stripe API."
+                    if paid
+                    else "Stripe has not reported this session as paid yet."
+                ),
+            }
+
+        # No gateway exists for any other method, so nothing can be verified.
         return {
             "payment_id": payment_id,
-            "status": "success",
-            "verified": True,
+            "status": "unverified",
+            "verified": False,
+            "source": None,
             "timestamp": datetime.utcnow().isoformat(),
-            "message": "Payment verified successfully"
+            "message": (
+                f"No payment gateway is connected for method '{method}'. "
+                "This payment cannot be verified server-side."
+            ),
         }
     except Exception as e:
         logger.error(f"Payment verify error: {e}")

@@ -38,6 +38,7 @@ import com.example.ui.components.PaymentModal
 import com.example.ui.screens.AuthScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.MonetizationScreen
+import com.example.ui.screens.ProductDetailScreen
 import com.example.ui.screens.ScraperScreen
 import com.example.ui.screens.WhatsAppBotScreen
 import com.example.ui.theme.CyberSurface
@@ -143,6 +144,7 @@ fun MainScreen(viewModel: ShoppingViewModel) {
           onUrlInputChanged = { viewModel.setScraperUrlInput(it) },
           onAnalyzeClick = { viewModel.analyzeAndScrapeUrl(it) },
           onViewChartClick = { viewModel.selectProductForChart(it) },
+          onOpenDetail = { viewModel.openProductDetail(it) },
           onShareWhatsAppClick = { product ->
             Toast.makeText(context, "🟢 WhatsApp Alert queued for ${product.title}!", Toast.LENGTH_SHORT).show()
             currentTabIndex = 2 // Switch to WhatsApp bot tab
@@ -253,6 +255,17 @@ fun MainScreen(viewModel: ShoppingViewModel) {
           },
           onRemoveProduct = { viewModel.toggleCompareProduct(it) }
         )
+      }
+    }
+
+    // Product Detail — shows only what the backend actually scraped
+    val detailProduct = uiState.selectedProductForDetail
+    if (detailProduct != null) {
+      Dialog(
+        onDismissRequest = { viewModel.closeProductDetail() },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+      ) {
+        ProductDetailScreen(product = detailProduct)
       }
     }
 

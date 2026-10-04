@@ -17,7 +17,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,16 +38,24 @@ data class ShoppingUiState(
   val selectedCategory: String = "All",
   val searchQuery: String = "",
   val selectedProductForChart: TrackedProduct? = null,
-  val isBotOnline: Boolean = true,
+  val selectedProductForDetail: TrackedProduct? = null,
+  // Starts offline. The app cannot claim the WhatsApp bot is online until it has
+  // actually connected — defaulting to `true` shows a green "online" badge for a
+  // bot that is not connected.
+  val isBotOnline: Boolean = false,
   val autoBroadcastEnabled: Boolean = true,
   val autoConvertAffiliate: Boolean = true,
   val isScraping: Boolean = false,
   val scraperUrlInput: String = "",
   val scraperSteps: List<ScraperLogStep> = emptyList(),
   val whatsappLogs: List<WhatsAppLog> = emptyList(),
-  val totalCommissionEarned: Int = 4850,
-  val affiliateClicksCount: Int = 1420,
-  val conversionRatePercent: Float = 3.4f,
+  // Money counters are 0 until a real backend figure is loaded. They must not
+  // ship pre-filled (4850 / 1420 / 3.4% were invented) — a dashboard that shows
+  // earnings nobody earned is the worst kind of fake.
+  val totalCommissionEarned: Int = 0,
+  val affiliateClicksCount: Int = 0,
+  val conversionRatePercent: Float = 0f,
+
   val currentUser: UserProfile? = null,
   val isAuthLoading: Boolean = false,
   val authErrorMessage: String? = null,
@@ -60,7 +67,9 @@ data class ShoppingUiState(
   val isPaymentModalOpen: Boolean = false,
   val selectedProductForPayment: TrackedProduct? = null,
   val paymentSuccessMessage: String? = null,
-  val appVersion: String = "v2.5.0 Pro (VGAS New Update)"
+  // "unknown" rather than a marketing version string. Real version comes from
+  // BuildConfig at runtime.
+  val appVersion: String = "unknown"
 )
 
 class ShoppingViewModel(application: Application) : AndroidViewModel(application) {
@@ -263,6 +272,14 @@ class ShoppingViewModel(application: Application) : AndroidViewModel(application
     _uiState.update { it.copy(selectedProductForChart = product) }
   }
 
+  fun openProductDetail(product: TrackedProduct) {
+    _uiState.update { it.copy(selectedProductForDetail = product) }
+  }
+
+  fun closeProductDetail() {
+    _uiState.update { it.copy(selectedProductForDetail = null) }
+  }
+
   fun setScraperUrlInput(url: String) {
     _uiState.update { it.copy(scraperUrlInput = url) }
   }
@@ -308,26 +325,42 @@ class ShoppingViewModel(application: Application) : AndroidViewModel(application
       }
 
       if (response != null) {
-        val productName = response.optString("name", "Product")
-        val currentPrice = response.optDouble("current_price", 0.0).toInt()
-        val originalPrice = response.optDouble("original_price", currentPrice.toDouble()).toInt()
-        val lowestPrice = response.optDouble("lowest_price", currentPrice.toDouble()).toInt().coerceAtMost(currentPrice)
+        // Every field below is read straight from the backend response. Where a
+        // field is missing it becomes an empty/zero value so the UI can say
+        // "not reported" — a substituted default (4.5 stars, "Verified
+        // Retailer", "LOOT500", a computed cashback) would be fabricated data
+        // wearing the store's name.
+        val productName = response.optString("name", "").ifBlank { "Unnamed product (scraper returned no title)" }
+        val currentPrice = response.optInt("current_price", 0)
+        val originalPrice = response.optInt("original_price", currentPrice)
+        val lowestPrice = response.optInt("lowest_price", currentPrice).coerceAtMost(currentPrice)
         val isFake = response.optBoolean("is_fake_discount", false)
-        val fakeReason = response.optString("fake_discount_reason", if (isFake) "Potential fake discount detected." else "Verified genuine discount.")
-        val affiliateUrl = response.optString("affiliate_url", urlInput)
-        val storeName = response.optString("store", response.optString("store_domain", "Unknown Store"))
-        val category = response.optString("category", "Electronics")
+        val fakeReason = response.optString("fake_discount_reason", "")
+        val affiliateUrl = response.optString("affiliate_url", "").ifBlank { urlInput }
+        val storeName = response.optString("store", response.optString("store_domain", "")).ifBlank { "Unknown store" }
+        val category = response.optString("category", "")
+        // No history -> empty string. Fabricating "original,current" would draw
+        // a price trend that never happened.
         val priceHistoryJson = response.optJSONArray("price_history")?.let { array ->
           List(array.length()) { idx -> array.optDouble(idx, 0.0).toInt().toString() }.joinToString(",")
-        } ?: "${originalPrice},${currentPrice}"
+        } ?: ""
 
         _uiState.update { state ->
           val newSteps = state.scraperSteps.mapIndexed { idx, step ->
             when (idx) {
               0 -> step.copy(status = "COMPLETED", detail = "DOM extracted. Product: $productName")
-              1 -> step.copy(status = "CACHED", detail = "Fetched cached product data from FastAPI.")
-              2 -> step.copy(status = "COMPLETED", detail = if (isFake) "Suspicious discount flagged by backend analysis." else "Discount verified as genuine.")
-              3 -> step.copy(status = "COMPLETED", detail = "Affiliate URL generated and verified.")
+              1 -> step.copy(status = "COMPLETED", detail = "Backend responded with live product data.")
+              2 -> step.copy(
+                status = "COMPLETED",
+                detail = when {
+                  isFake -> "Suspicious discount flagged by backend analysis: ${fakeReason.ifBlank { "no reason supplied" }}"
+                  else -> "Backend reported no fake-discount flag for this item."
+                }
+              )
+              3 -> step.copy(
+                status = if (affiliateUrl.isBlank()) "FAILED" else "COMPLETED",
+                detail = if (affiliateUrl.isBlank()) "Backend returned no affiliate URL." else "Affiliate URL returned by backend."
+              )
               else -> step
             }
           }
@@ -347,14 +380,14 @@ class ShoppingViewModel(application: Application) : AndroidViewModel(application
             affiliateUrl = affiliateUrl,
             category = category,
             priceHistoryJson = priceHistoryJson,
-            reviewScore = response.optDouble("rating", 4.5).toFloat(),
+            reviewScore = if (response.has("rating")) response.optDouble("rating", 0.0).toFloat() else 0f,
             reviewCount = response.optInt("rating_count", 0),
-            qualityScore = response.optInt("quality_score", 90),
-            functionalityScore = response.optInt("functionality_score", 90),
+            qualityScore = response.optInt("quality_score", 0),
+            functionalityScore = response.optInt("functionality_score", 0),
             isLootDeal = response.optDouble("discount_percentage", 0.0) >= 70,
-            sellerName = response.optString("seller_name", "Verified Retailer"),
-            couponCode = response.optString("coupon_code", "VGAS-API"),
-            cashbackCoins = response.optInt("cashback_coins", (currentPrice / 100).coerceAtLeast(50))
+            sellerName = response.optString("seller_name", ""),
+            couponCode = response.optString("coupon_code", ""),
+            cashbackCoins = response.optInt("cashback_coins", 0)
           )
         )
 
@@ -439,12 +472,8 @@ class ShoppingViewModel(application: Application) : AndroidViewModel(application
   }
 
   fun processPayment(method: String, details: String) {
-    viewModelScope.launch {
-      delay(1000)
-      val prod = _uiState.value.selectedProductForPayment
-      val msg = "🎉 अभिनंदन! ${prod?.title ?: "प्रॉडक्ट"} साठी ₹${prod?.currentPrice ?: 0} चे पेमेंट ($method) यशस्वीरित्या पूर्ण झाले! VGAS Verified Order."
-      _uiState.update { it.copy(paymentSuccessMessage = msg) }
-    }
+    val msg = "No payment gateway is connected. Use Stripe checkout for real payments."
+    _uiState.update { it.copy(paymentSuccessMessage = msg) }
   }
 
   fun clearPaymentMessage() {

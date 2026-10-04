@@ -61,23 +61,46 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/api/v1/payment/upi")
 async def upi_payment_track(req: UPIPaymentRequest, db: Session = Depends(get_db)):
-    """Track and verify manual UPI payment submissions (via transaction UTR/reference)"""
+    """Manual UPI payment claim — REFUSED, because nothing here can verify it.
+
+    This endpoint used to accept any self-reported UTR/reference number and
+    immediately upgrade the caller's plan to Pro/Premium. That granted paid
+    features for free to anyone who posted ten characters, so the "verification"
+    was pure theatre.
+
+    A UTR can only be trusted if something authoritative confirms the money
+    arrived. That requires one of:
+      * a payment gateway that supports UPI and exposes a server-side
+        verify/payment API (Razorpay, Cashfree, PhonePe Business), or
+      * a bank statement reconciliation feed.
+
+    Neither is integrated, and there is no payment ledger table to record an
+    unverified claim in. So the endpoint reports that honestly instead of
+    upgrading anybody. Use POST /api/v1/payment/stripe/checkout for a real,
+    signature-verified upgrade.
+    """
     if req.plan not in ["pro", "premium"]:
         raise HTTPException(status_code=400, detail="Invalid plan requested")
-        
-    if len(req.utr_number) < 10:
-        raise HTTPException(status_code=400, detail="Invalid UTR/Transaction Reference number")
-        
-    success = await upgrade_user_plan(req.user_id, req.plan, db)
-    if not success:
-        raise HTTPException(status_code=404, detail="User not found")
-        
-    return {
-        "success": True,
-        "message": f"UPI transaction {req.utr_number} verified successfully! Upgraded to {req.plan}.",
-        "plan": req.plan,
-        "user_id": req.user_id
-    }
+
+    raise HTTPException(
+        status_code=501,
+        detail={
+            "error": "upi_verification_unavailable",
+            "message": (
+                "Manual UPI plan upgrades are disabled. A submitted UTR/reference "
+                "number cannot be verified by this server, so no plan is granted."
+            ),
+            "why_not_just_trust_the_utr": (
+                "The UTR is supplied by the caller. Accepting it unverified would "
+                "let anyone self-upgrade to a paid plan for free."
+            ),
+            "use_instead": "POST /api/v1/payment/stripe/checkout",
+            "required_to_re_enable": [
+                "Integrate a UPI-capable payment gateway with a server-side verify API",
+                "Add a payments ledger table to record each attempt and its outcome",
+            ],
+        },
+    )
 
 @router.get("/api/v1/whatsapp/webhook")
 async def whatsapp_verify():

@@ -1,0 +1,41 @@
+# Cline Token-Saving Protocol for VGAS Shopping AI Project
+
+## Token-Saving Workflow
+- Keep responses concise and to the point.
+- For searches, first read the specific file/path and small related sections; do not read entire large files unnecessarily.
+- Use minimal diffs for changes; do not reformat unrelated code.
+- From command output, only summarize errors, status, and necessary lines.
+- Before large implementations, give a short 2-4 step plan.
+- After completion, mention changed files and verification in a small summary.
+
+## Language
+- Use **Marathi** for all conversations with the user.
+- Use **English** for code, comments, and technical terms.
+
+## Project Context
+- This is the **VGAS Shopping AI** project by Vikas Gunjal.
+- Master ID: `vikas_gunjal`
+- Backend: FastAPI (Python) at `backend/`
+- Frontend: React at `web/`
+- Bot: Node.js WhatsApp bot at `bot/`
+- Mobile: Android at `shopping-ai/`
+- Database: PostgreSQL + Redis cache
+- AI Engine: Multi-model hub (Gemini, OpenAI, HuggingFace, Kimi K3)
+
+## Safety Rules
+- NEVER delete user projects or source code.
+- NEVER modify `.env` files with real API keys.
+- NEVER run destructive commands without explicit user approval.
+- Always preserve `backend/`, `web/`, `bot/`, `shopping-ai/` folders.
+- Ask before uninstalling any packages or tools.
+
+## API Keys & Secrets
+- API keys are stored in `backend/.env` - never expose them.
+- Use environment variables, never hardcode secrets.
+- Master auth token is protected in `backend/app/ai_engine_hub.py`.
+
+## Code Conventions
+- Follow existing code style and patterns.
+- Use Marathi comments where helpful for user understanding.
+- Keep function names in English (standard practice).
+- Log important actions in Marathi for user clarity.

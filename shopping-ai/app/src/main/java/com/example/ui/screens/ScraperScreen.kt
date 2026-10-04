@@ -217,17 +217,17 @@ fun ScraperScreen(
           Spacer(modifier = Modifier.height(10.dp))
           Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Cached Price Records:", color = Color(0xFF94A3B8), style = MaterialTheme.typography.bodyMedium)
-            Text("1,482,900+ points", color = NeonEmerald, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            Text("Not available", color = Color(0xFF64748B), style = MaterialTheme.typography.bodyMedium)
           }
           Spacer(modifier = Modifier.height(6.dp))
           Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Average Scrape Latency:", color = Color(0xFF94A3B8), style = MaterialTheme.typography.bodyMedium)
-            Text("380ms (Headless)", color = Color.White, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            Text("Not available", color = Color(0xFF64748B), style = MaterialTheme.typography.bodyMedium)
           }
           Spacer(modifier = Modifier.height(6.dp))
           Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Discount Risk Detection Accuracy:", color = Color(0xFF94A3B8), style = MaterialTheme.typography.bodyMedium)
-            Text("99.4% Verified", color = AlertOrange, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            Text("Not available", color = Color(0xFF64748B), style = MaterialTheme.typography.bodyMedium)
           }
         }
       }

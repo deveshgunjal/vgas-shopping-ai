@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vgas Shopping AI - Never Overpay Again</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Vgas Shopping AI",
+    "url": "http://localhost:8000",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "http://localhost:8000/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+  <!-- Hero -->
+  <div class="container mx-auto px-4 py-16 text-center">
+    <h1 class="text-5xl font-bold mb-4">Never <span class="text-green-400">Overpay</span> Again</h1>
+    <p class="text-xl text-gray-400 mb-8">Track prices across 100+ stores. Get alerts when prices drop. Save money automatically.</p>
+    
+    <!-- Search Bar -->
+    <div class="max-w-2xl mx-auto mb-12">
+      <div class="flex gap-2">
+        <input type="text" id="search-input" placeholder="Paste a product URL to check price..." 
+               class="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500">
+        <button onclick="checkPrice()" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-bold transition">
+          Check Price
+        </button>
+      </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-16">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-400">50,000+</div>
+        <div class="text-gray-400">Active Users</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-400">2 Crore+</div>
+        <div class="text-gray-400">Money Saved</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-green-400">1M+</div>
+        <div class="text-gray-400">Deals Tracked</div>
+      </div>
+    </div>
+    
+    <!-- Deal of the Day -->
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold mb-6">Deal of the Day</h2>
+      <div id="deals-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-800 rounded-lg p-4 animate-pulse h-32"></div>
+        <div class="bg-gray-800 rounded-lg p-4 animate-pulse h-32"></div>
+      </div>
+    </div>
+    
+    <!-- Features -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
+      <div class="bg-gray-800 rounded-lg p-6 text-center">
+        <div class="text-4xl mb-3">Instant Alerts</div>
+        <h3 class="font-bold mb-2">WhatsApp/SMS Alerts</h3>
+        <p class="text-gray-400 text-sm">Get notified when prices drop</p>
+      </div>
+      <div class="bg-gray-800 rounded-lg p-6 text-center">
+        <div class="text-4xl mb-3">Price History</div>
+        <h3 class="font-bold mb-2">90-Day Trends</h3>
+        <p class="text-gray-400 text-sm">See price history before buying</p>
+      </div>
+      <div class="bg-gray-800 rounded-lg p-6 text-center">
+        <div class="text-4xl mb-3">Cashback</div>
+        <h3 class="font-bold mb-2">Instant UPI Payout</h3>
+        <p class="text-gray-400 text-sm">Earn cashback on purchases</p>
+      </div>
+    </div>
+    
+    <!-- CTA -->
+    <div class="mt-16">
+      <a href="/dashboard" class="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-lg font-bold text-lg transition">
+        Start Saving Now
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    async function checkPrice() {
+      const url = document.getElementById("search-input").value;
+      if (!url) return alert("Please enter a product URL");
+      window.location.href = `/dashboard?track=${encodeURIComponent(url)}`;
+    }
+    
+    // Load deals
+    fetch("/api/v1/leaderboard").then(r => r.json()).then(data => {
+      const container = document.getElementById("deals-container");
+      container.innerHTML = data.deals?.slice(0, 4).map(deal => `
+        <a href="${deal.url}" target="_blank" class="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 text-left transition">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h3 class="font-medium line-clamp-2">${deal.title}</h3>
+              <div class="mt-2">
+                <span class="text-green-400 font-bold text-lg">${deal.current_price}</span>
+                <span class="text-gray-500 line-through text-sm ml-2">${deal.original_price}</span>
+                <span class="bg-green-600 text-white text-xs px-2 py-0.5 rounded-full ml-2">${deal.discount_percent}% OFF</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `).join("") || "<p class='text-gray-400'>No deals yet. Start tracking products!</p>";
+    });
+  </script>
+</body>
+</html>

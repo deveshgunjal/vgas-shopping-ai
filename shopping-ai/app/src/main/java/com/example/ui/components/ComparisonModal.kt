@@ -152,8 +152,6 @@ fun ComparisonModal(
                   Text(prod.sellerName, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
                   if (prod.isFakeDiscount) {
                     Text("⚠️ Fake Deal Alert", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = ScamRed)
-                  } else {
-                    Text("✅ VGAS Verified Deal (Vikas Gunjal Advance System)", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold), color = NeonEmerald)
                   }
                 }
 

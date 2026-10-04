@@ -1,0 +1,183 @@
+═══════════════════════════════════════════════════════════
+  VGAS SHOPPING AI - MASTER ACTION PLAN FOR SAM AI BOT
+  Developer: Vikas Gunjal | Version: 2.5.0
+═══════════════════════════════════════════════════════════
+
+📍 PROJECT ROOT: D:\Sam\Vgas Shooping Ai
+📍 SAM LAUNCHER: D:\Sam\samgo.bat (command: vgas)
+📍 RUN SCRIPT: D:\Sam\run_vgas.py
+
+═══════════════════════════════════════════════════════════
+  STEP 1: BACKEND SERVER START (Priority: HIGH)
+═══════════════════════════════════════════════════════════
+
+📁 Path: D:\Sam\Vgas Shooping Ai\backend
+
+1A. Install Python Dependencies:
+    cd D:\Sam\Vgas Shooping Ai\backend
+    pip install -r requirements.txt
+    playwright install chromium
+
+1B. Start Backend Server:
+    cd D:\Sam\Vgas Shooping Ai\backend
+    uvicorn app.main:app --reload --port 8000
+    → URL: http://localhost:8000
+    → Docs: http://localhost:8000/docs
+    → Health: http://localhost:8000/health
+
+1C. Verify API Endpoints:
+    ✅ GET /health - Server health check
+    ✅ GET /api/v1/info - API information
+    ✅ GET /api/v1/search/?query=iphone - Product search
+    ✅ GET /api/v1/products/by-url?url=... - Product by URL
+    ✅ GET /api/v1/affiliate/convert?url=... - Affiliate link
+    ✅ POST /api/v1/ai/chat/send - AI chat
+    ✅ GET /api/v1/search/loot-deals - Loot deals
+
+═══════════════════════════════════════════════════════════
+  STEP 2: WEB FRONTEND START (Priority: HIGH)
+═══════════════════════════════════════════════════════════
+
+📁 Path: D:\Sam\Vgas Shooping Ai\web
+
+2A. Install Web Dependencies:
+    cd D:\Sam\Vgas Shooping Ai\web
+    npm install
+
+2B. Start Web App:
+    cd D:\Sam\Vgas Shooping Ai\web
+    npm start
+    → URL: http://localhost:3000
+
+2C. Features:
+    ✅ Product search with price comparison
+    ✅ 80%+ Loot deals section
+    ✅ Refurbished products section
+    ✅ AI Chat (Kimi K3)
+    ✅ Affiliate link converter
+    ✅ Fake discount detection
+    ✅ Wallet & monetization
+    ✅ WhatsApp QR scanner
+    ✅ User auth (email/password)
+    ✅ Multi-currency support
+    ✅ Dark cyberpunk theme
+
+═══════════════════════════════════════════════════════════
+  STEP 3: WHATSAPP BOT START (Priority: MEDIUM)
+═══════════════════════════════════════════════════════════
+
+📁 Path: D:\Sam\Vgas Shooping Ai\bot
+
+3A. Install Bot Dependencies:
+    cd D:\Sam\Vgas Shooping Ai\bot
+    npm install
+
+3B. Start WhatsApp Bot:
+    cd D:\Sam\Vgas Shooping Ai\bot
+    npm start
+    → Scan QR code from WhatsApp Linked Devices
+    → Bot listens for commands: find, deals, earn, help
+
+3C. Commands:
+    • find [product] - Search products
+    • deals - Today's best deals
+    • earn - Affiliate info
+    • help - Show menu
+    • paste URL - Auto analyze
+
+═══════════════════════════════════════════════════════════
+  STEP 4: ANDROID APK BUILD (Priority: MEDIUM)
+═══════════════════════════════════════════════════════════
+
+📁 Path: D:\Sam\Vgas Shooping Ai\shopping-ai
+
+4A. Open in Android Studio:
+    Open: D:\Sam\Vgas Shooping Ai\shopping-ai
+
+4B. Build APK:
+    Build → Build Bundle/APK → Build APK
+    → Output: app/build/outputs/apk/debug/app-debug.apk
+
+4C. App Features:
+    ✅ 5 tabs: Deals, AI Scraper, WhatsApp Bot, Affiliate, Account
+    ✅ URL paste → AI scrape & verify
+    ✅ Price chart (Canvas)
+    ✅ Product comparison (side-by-side)
+    ✅ Payment modal (UPI/Card/COD)
+    ✅ Firebase auth (Email/Google/Guest)
+    ✅ Room database (local storage)
+    ✅ 3 languages: English, Hindi, Marathi
+    ✅ AdMob integration
+    ✅ WhatsApp broadcast log
+    ✅ Affiliate commission tracker
+
+═══════════════════════════════════════════════════════════
+  STEP 5: CHROME EXTENSION (Priority: LOW)
+═══════════════════════════════════════════════════════════
+
+📁 Path: D:\Sam\Vgas Shooping Ai\extension
+
+5A. Load in Chrome:
+    chrome://extensions → Load unpacked
+    Select: D:\Sam\Vgas Shooping Ai\extension
+
+5B. Features:
+    ✅ Injects price comparison bar on Amazon/Flipkart/Myntra
+    ✅ Fetches from backend API
+    ✅ Shows best prices across stores
+
+═══════════════════════════════════════════════════════════
+  STEP 6: DEPLOYMENT (Priority: LOW)
+═══════════════════════════════════════════════════════════
+
+6A. Backend → Render/Railway:
+    • Deploy FastAPI on Render.com
+    • Set DATABASE_URL environment variable
+    • Set all API keys
+
+6B. Web → Vercel/Netlify:
+    cd D:\Sam\Vgas Shooping Ai\web
+    npm run build
+    Deploy build/ folder to Vercel
+
+6C. Android → Play Store:
+    • Generate signed APK/AAB
+    • Upload to Google Play Console
+
+═══════════════════════════════════════════════════════════
+  QUICK ONE-COMMAND START (Use samgo.bat)
+═══════════════════════════════════════════════════════════
+
+    D:\Sam\samgo.bat vgas
+
+    हे command run_vgas.py चालवते जे Backend API start करते.
+
+    किंवा सर्व services एकाच वेळी:
+    D:\Sam\Vgas Shooping Ai\start_vgas_all.bat
+
+═══════════════════════════════════════════════════════════
+  EXPECTED RESULTS AFTER ALL STEPS
+═══════════════════════════════════════════════════════════
+
+    ✅ Backend API:    http://localhost:8000/docs
+    ✅ Web Frontend:   http://localhost:3000
+    ✅ WhatsApp Bot:   Running (QR scan needed)
+    ✅ Android APK:    app-debug.apk ready
+    ✅ Chrome Ext:     Loaded in browser
+    ✅ Income:         Affiliate links auto-generated
+
+═══════════════════════════════════════════════════════════
+  IMPORTANT CONFIG NOTES
+═══════════════════════════════════════════════════════════
+
+    📧 Email: gunjalvikas786@gmail.com
+    📞 Phone: +91 9881300933
+    🔑 Amazon Affiliate ID: vgas-vikasg-21
+    🔑 Flipkart Affiliate ID: vgas-21
+    💳 PayPal: gunjalvikas786@gmail.com (sandbox)
+    🗄️ Database: SQLite (vgas_production.db) - No setup needed!
+    🗄️ Redis: Disabled (in-memory fallback active)
+    🤖 AI: Kimi K3 / Moonshot API configured
+    🌍 Countries: India, USA, UK, Germany, Japan, UAE, etc.
+    🌐 Languages: 24+ (Marathi, Hindi, English, Tamil, etc.)
+═══════════════════════════════════════════════════════════
